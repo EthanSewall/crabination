@@ -13,7 +13,6 @@ namespace Crabination
         {
 
         }
-
         ~SceneObject()
         {
             if (parent != null)
@@ -26,11 +25,37 @@ namespace Crabination
             }
         }
 
+        public virtual void OnUpdate(float deltaTime)
+        {
+
+        }
+        public virtual void OnDraw()
+        {
+
+        }
+
+        public void Update(float deltaTime)
+        {
+            OnUpdate(deltaTime);
+            foreach (SceneObject child in children)
+            {
+                child.Update(deltaTime);
+            }
+        }
+        //these don't actually update or draw, but instead call this function in all children, and call the On() methods
+        public void Draw()
+        {
+            OnDraw();
+            foreach (SceneObject child in children)
+            {
+                child.Draw();
+            }
+        }
+
         public SceneObject Parent
         {
             get { return parent; }
         }
-
         public int GetChildCount()
         {
             return children.Count;
@@ -39,7 +64,6 @@ namespace Crabination
         {
             return children[index];
         }
-
         public void AddChild(SceneObject child)
         {
             if (child.parent == null)
@@ -48,7 +72,6 @@ namespace Crabination
                 children.Add(child);
             }
         }
-
         public void RemoveChild(SceneObject child)
         {
             if (children.Remove(child) == true)
