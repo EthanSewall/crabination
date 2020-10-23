@@ -1,10 +1,14 @@
-﻿using System;
+﻿using static Raylib_cs.Raylib;
+using static Raylib_cs.Color;
+using static Raylib_cs.Raymath;
+using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Numerics;
 
 namespace Crabination
 {
-    class SceneObject
+    public class SceneObject
     {
         protected SceneObject parent = null;
         protected List<SceneObject> children = new List<SceneObject>();
@@ -51,6 +55,37 @@ namespace Crabination
             {
                 child.UpdateTransform();
             }
+        }
+
+        public void SetPosition(float x, float y)
+        {
+            localTransform.SetTranslate(x, y);
+            UpdateTransform();
+        }
+        public void SetRotate(float radians)
+        {
+            localTransform.SetRotateZ(radians);
+            UpdateTransform();
+        }
+        public void SetScale(float width, float height)
+        {
+            localTransform.SetScaled(width, height, 1);
+            UpdateTransform();
+        }
+        public void Translate(float x, float y)
+        {
+            localTransform.Translate(x, y);
+            UpdateTransform();
+        }
+        public void Rotate(float radians)
+        {
+            localTransform.RotateZ(radians);
+            UpdateTransform();
+        }
+        public void Scale(float width, float height)
+        {
+            localTransform.Scale(width, height, 1);
+            UpdateTransform();
         }
 
         public virtual void OnUpdate(float deltaTime)
@@ -108,5 +143,36 @@ namespace Crabination
             }
         }
 
+    }
+
+    public class SpriteObject : SceneObject
+    {
+        Raylib_cs.Texture2D texture = new Raylib_cs.Texture2D();
+
+        public void Load(string path)
+        {
+            texture = LoadTexture(path);
+        }
+        public float Width
+        {
+            get { return texture.width; }
+        }
+        public float Height
+        {
+            get { return texture.height; }
+        }
+
+        public SpriteObject()
+        {
+            
+        }
+
+        public override void OnDraw()
+        {
+            float rotation = (float)Math.Atan2(globalTransform.m4, globalTransform.m1);
+
+            DrawTextureEx(texture, new Vector2(globalTransform.m3, globalTransform.m6), rotation * (float)(180.0f / Math.PI),1, WHITE);
+
+        }
     }
 }
