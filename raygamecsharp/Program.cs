@@ -25,6 +25,7 @@ namespace Crabination
             SceneObject smallCrab = new SceneObject();
             SpriteObject bigSprite = new SpriteObject();
             SpriteObject smallSprite = new SpriteObject();
+            SceneObject collisionCircle = new SceneObject();
 
             {
                 bigSprite.Load("crab.png");
@@ -33,6 +34,7 @@ namespace Crabination
                 smallCrab.AddChild(smallSprite);
                 bigCrab.AddChild(bigSprite);
                 bigCrab.AddChild(smallCrab);
+                bigCrab.AddChild(collisionCircle);
 
                 bigSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
                 smallSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
@@ -53,7 +55,7 @@ namespace Crabination
 
                 Vector2 accelDirection = new Vector2();
 
-                if (IsKeyDown(Raylib_cs.KeyboardKey.KEY_W))
+                if (IsKeyDown(Raylib_cs.KeyboardKey.KEY_W) && bigCrab.IsInBounds())
                 {
                     Vector3 facing = new Vector3( bigCrab.LocalTransform.m2, bigCrab.LocalTransform.m1, 1) * game.deltaTime * -150 * accel; 
                     accelDirection += new Vector2(facing.y, -facing.x);
@@ -62,7 +64,7 @@ namespace Crabination
                 {
                     bigCrab.Rotate(-game.deltaTime);
                 }
-                if (IsKeyDown(Raylib_cs.KeyboardKey.KEY_S))
+                if (IsKeyDown(Raylib_cs.KeyboardKey.KEY_S) && bigCrab.IsInBounds())
                 {
                     Vector3 facing = new Vector3(bigCrab.LocalTransform.m2, bigCrab.LocalTransform.m1, 1) * game.deltaTime * 150 * accel;
                     accelDirection += new Vector2(facing.y, -facing.x);
@@ -79,11 +81,31 @@ namespace Crabination
                 {
                     smallCrab.Rotate(game.deltaTime);
                 }
-
                 bigCrab.acceleration = accelDirection;
                 bigCrab.velocity += bigCrab.acceleration;
                 bigCrab.Translate(bigCrab.velocity.X, bigCrab.velocity.Y);
                 bigCrab.velocity = new Vector2(bigCrab.velocity.X * drag, bigCrab.velocity.Y * drag);
+                if (bigCrab.GlobalTransform.m6 < 0)
+                {
+                    bigCrab.velocity.Y = MathF.Abs(bigCrab.velocity.Y);                   
+                }
+                if (bigCrab.GlobalTransform.m6 > 900)
+                {
+                    bigCrab.velocity.Y = MathF.Abs(bigCrab.velocity.Y);
+                    bigCrab.velocity.Y = -bigCrab.velocity.Y;
+                }
+                if (bigCrab.GlobalTransform.m3 > 1600)
+                {
+                    bigCrab.velocity.X = MathF.Abs(bigCrab.velocity.X);
+                    bigCrab.velocity.X = -bigCrab.velocity.X;
+                }
+                if (bigCrab.GlobalTransform.m3 < 0)
+                {
+                    bigCrab.velocity.X = MathF.Abs(bigCrab.velocity.X);
+                }
+
+
+                DrawCircle((int)collisionCircle.GlobalTransform.m3, (int)collisionCircle.GlobalTransform.m6, 60, WHITE);
 
                 bigCrab.Draw();
                 bigCrab.Update(game.deltaTime);

@@ -145,6 +145,29 @@ namespace Crabination
             }
         }
 
+        public bool IsInBounds()
+        {
+            bool h = true;
+
+            if(GlobalTransform.m6 < 0)
+            {
+                h = false;
+            }
+            if (GlobalTransform.m6 > 900)
+            {
+                h = false;
+            }
+            if (GlobalTransform.m3 < 0)
+            {
+                h = false;
+            }
+            if (GlobalTransform.m3 > 1600)
+            {
+                h = false;
+            }
+
+            return h;
+        }
     }
 
     public class SpriteObject : SceneObject
