@@ -14,6 +14,8 @@ namespace Crabination
         protected List<SceneObject> children = new List<SceneObject>();
         protected Matrix3 localTransform = new Matrix3();
         protected Matrix3 globalTransform = new Matrix3();
+        public Vector2 velocity = new Vector2();
+        public Vector2 acceleration = new Vector2();
         
         public Matrix3 LocalTransform
         {

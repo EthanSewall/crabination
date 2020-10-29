@@ -16,6 +16,8 @@ namespace Crabination
             InitWindow(1600, 900, "Project");
             SetTargetFPS(60);
             bool stillGoing = true;
+            float accel = 0.75f;
+            float drag = 0.95f;
             Game game = new Game();
             game.Init();
 
@@ -24,20 +26,24 @@ namespace Crabination
             SpriteObject bigSprite = new SpriteObject();
             SpriteObject smallSprite = new SpriteObject();
 
-            bigSprite.Load("crab.png");
-            smallSprite.Load("smallcrab.png");
+            {
+                bigSprite.Load("crab.png");
+                smallSprite.Load("smallcrab.png");
 
-            smallCrab.AddChild(smallSprite);
-            bigCrab.AddChild(bigSprite);
-            bigCrab.AddChild(smallCrab);
+                smallCrab.AddChild(smallSprite);
+                bigCrab.AddChild(bigSprite);
+                bigCrab.AddChild(smallCrab);
 
-            bigSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
-            smallSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
+                bigSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
+                smallSprite.SetRotate(-90 * (float)(Math.PI / 180.0f));
 
-            bigCrab.SetPosition(800, 450);
-            smallCrab.SetPosition(bigSprite.Height * 0.65f, -bigSprite.Width * 0.25f);
+                bigCrab.SetPosition(800, 450);
+                smallCrab.SetPosition(bigSprite.Height * 0.65f, -bigSprite.Width * 0.25f);
 
-            bigCrab.Rotate((float)(Math.PI * 0.5f));
+                bigCrab.Rotate((float)(Math.PI * 0.5f));
+            }//crab initialization stuff
+
+
             while (!WindowShouldClose() && stillGoing)
             {
                 BeginDrawing();
@@ -45,11 +51,12 @@ namespace Crabination
                 game.Draw();
                 ClearBackground(DARKBLUE);
 
+                Vector2 accelDirection = new Vector2();
 
                 if (IsKeyDown(Raylib_cs.KeyboardKey.KEY_W))
                 {
-                    Vector3 facing = new Vector3( bigCrab.LocalTransform.m2, bigCrab.LocalTransform.m1, 1) * game.deltaTime * -150; 
-                    bigCrab.Translate(facing.y, -facing.x);
+                    Vector3 facing = new Vector3( bigCrab.LocalTransform.m2, bigCrab.LocalTransform.m1, 1) * game.deltaTime * -150 * accel; 
+                    accelDirection += new Vector2(facing.y, -facing.x);
                 }
                 if (IsKeyDown(Raylib_cs.KeyboardKey.KEY_A))
                 {
@@ -57,14 +64,26 @@ namespace Crabination
                 }
                 if (IsKeyDown(Raylib_cs.KeyboardKey.KEY_S))
                 {
-                    Vector3 facing = new Vector3(bigCrab.LocalTransform.m2, bigCrab.LocalTransform.m1, 1) * game.deltaTime * 150; 
-                    bigCrab.Translate(facing.y, -facing.x);
+                    Vector3 facing = new Vector3(bigCrab.LocalTransform.m2, bigCrab.LocalTransform.m1, 1) * game.deltaTime * 150 * accel;
+                    accelDirection += new Vector2(facing.y, -facing.x);
                 }
                 if (IsKeyDown(Raylib_cs.KeyboardKey.KEY_D))
                 {
                     bigCrab.Rotate(game.deltaTime);
                 }
+                if (IsKeyDown(Raylib_cs.KeyboardKey.KEY_Q))
+                {
+                    smallCrab.Rotate(-game.deltaTime);
+                }
+                if (IsKeyDown(Raylib_cs.KeyboardKey.KEY_E))
+                {
+                    smallCrab.Rotate(game.deltaTime);
+                }
 
+                bigCrab.acceleration = accelDirection;
+                bigCrab.velocity += bigCrab.acceleration;
+                bigCrab.Translate(bigCrab.velocity.X, bigCrab.velocity.Y);
+                bigCrab.velocity = new Vector2(bigCrab.velocity.X * drag, bigCrab.velocity.Y * drag);
 
                 bigCrab.Draw();
                 bigCrab.Update(game.deltaTime);
