@@ -30,6 +30,10 @@ namespace Crabination
             List<SceneObject> projectileCrabs = new List<SceneObject>();
             List<SpriteObject> projectileSprites = new List<SpriteObject>();
 
+            List<SceneObject> incomingCrabs = new List<SceneObject>();
+            List<SpriteObject> incomingSprites = new List<SpriteObject>();
+            float spawnDelay = 0f;
+
             {
                 bigSprite.Load("crab.png");
                 smallSprite.Load("smallcrab.png");
@@ -112,29 +116,44 @@ namespace Crabination
 
                 foreach(SceneObject crab in projectileCrabs)
                 {
-                   // if(!crab.IsInBounds())
-                   // {
-                   //     projectileCrabs.Remove(crab);
-                   // }
                     crab.Draw();
+                    crab.Translate(crab.velocity.X, crab.velocity.Y);
                 }
-
-                if(IsKeyDown(Raylib_cs.KeyboardKey.KEY_ENTER))
+                for (int i = 0; i < projectileCrabs.Count; i++)
+                {
+                     if(!projectileCrabs[i].IsInBounds())
+                     {
+                         projectileCrabs.RemoveAt(i);
+                     }
+                }
+                if (IsKeyPressed(Raylib_cs.KeyboardKey.KEY_ENTER))
                 {
                     SceneObject newProjectile = new SceneObject();
                     SpriteObject newSprite = new SpriteObject();
                     newSprite.Load("weapon_crab.png");
                     newProjectile.AddChild(newSprite);
                     newProjectile.SetPosition(bigCrab.GlobalTransform.m3, bigCrab.GlobalTransform.m6);
+                    newSprite.Translate(-smallSprite.Width * 0.4f, 0);
+                    Vector3 facing = new Vector3(smallCrab.GlobalTransform.m2, smallCrab.GlobalTransform.m1, 1) * game.deltaTime * 1500;
+                    newProjectile.velocity = new Vector2(facing.y, -facing.x);
 
                     projectileCrabs.Add(newProjectile);
                     projectileSprites.Add(newSprite);
+                }
+
+                if(spawnDelay > 2f)
+                {
+                    SceneObject newIncoming = new SceneObject();
+                    SpriteObject newSprite = new SpriteObject();
+                    newSprite.Load("weapon_crab.png");
+                    newIncoming.AddChild(newSprite);
                 }
 
                 DrawCircle((int)collisionCircle.GlobalTransform.m3, (int)collisionCircle.GlobalTransform.m6, 60, WHITE);
 
                 bigCrab.Draw();
                 bigCrab.Update(game.deltaTime);
+                spawnDelay += game.deltaTime;
 
                 EndDrawing();
             }
