@@ -145,8 +145,41 @@ namespace Crabination
                 {
                     SceneObject newIncoming = new SceneObject();
                     SpriteObject newSprite = new SpriteObject();
-                    newSprite.Load("weapon_crab.png");
+                    newSprite.Load("smallcrab.png");
                     newIncoming.AddChild(newSprite);
+                    Random rngX = new Random();
+                    Random rngY = new Random(rngX.Next());
+                    newIncoming.SetPosition(rngX.Next(0,1600), rngY.Next(0, 900));
+                    incomingCrabs.Add(newIncoming);
+                    incomingSprites.Add(newSprite);
+                    spawnDelay = 0;
+                }
+
+                foreach (SceneObject crab in incomingCrabs)
+                {
+                    if(MathF.Abs(crab.GlobalTransform.m3 - bigCrab.GlobalTransform.m3) > 5)
+                    {
+                        if(crab.GlobalTransform.m3 > bigCrab.GlobalTransform.m3)
+                        {
+                            crab.Translate(-50 * game.deltaTime, 0);
+                        }
+                        else if (crab.GlobalTransform.m3 < bigCrab.GlobalTransform.m3)
+                        {
+                            crab.Translate(50 * game.deltaTime, 0);
+                        }
+                    }
+                    if (MathF.Abs(crab.GlobalTransform.m6 - bigCrab.GlobalTransform.m6) > 5)
+                    {
+                        if (crab.GlobalTransform.m6 > bigCrab.GlobalTransform.m6)
+                        {
+                            crab.Translate(0, -50 * game.deltaTime);
+                        }
+                        else if (crab.GlobalTransform.m6 < bigCrab.GlobalTransform.m6)
+                        {
+                            crab.Translate(0, 50 * game.deltaTime);
+                        }
+                    }
+                    crab.Draw();
                 }
 
                 DrawCircle((int)collisionCircle.GlobalTransform.m3, (int)collisionCircle.GlobalTransform.m6, 60, WHITE);
