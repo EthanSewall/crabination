@@ -147,6 +147,7 @@ namespace Crabination
                     SpriteObject newSprite = new SpriteObject();
                     newSprite.Load("smallcrab.png");
                     newIncoming.AddChild(newSprite);
+                    newSprite.Translate(-newSprite.Width * 0.5f, 0);
                     Random rngX = new Random();
                     Random rngY = new Random(rngX.Next());
                     newIncoming.SetPosition(rngX.Next(0,1600), rngY.Next(0, 900));
@@ -182,7 +183,24 @@ namespace Crabination
                     crab.Draw();
                 }
 
-                DrawCircle((int)collisionCircle.GlobalTransform.m3, (int)collisionCircle.GlobalTransform.m6, 60, WHITE);
+                for (int i = 0; i < incomingCrabs.Count; i++)
+                {
+                    if (incomingCrabs[i].DistanceFrom(new Vector2(collisionCircle.GlobalTransform.m3, collisionCircle.GlobalTransform.m6)) < 60)
+                    {
+                        incomingCrabs.RemoveAt(i);
+                    }
+                }
+
+                for (int h = 0; h < projectileCrabs.Count; h++)
+                {
+                    for (int i = 0; i < incomingCrabs.Count; i++)
+                    {
+                        if (incomingCrabs[i].DistanceFrom(new Vector2(projectileCrabs[h].GlobalTransform.m3, projectileCrabs[h].GlobalTransform.m6)) < 20)
+                        {
+                            incomingCrabs.RemoveAt(i);
+                        }
+                    }
+                }
 
                 bigCrab.Draw();
                 bigCrab.Update(game.deltaTime);

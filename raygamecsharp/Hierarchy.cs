@@ -168,6 +168,11 @@ namespace Crabination
 
             return h;
         }
+
+        public int DistanceFrom(Vector2 fromWhat)
+        {
+            return (int)(new Vector2(MathF.Abs(globalTransform.m3 - fromWhat.X), MathF.Abs(globalTransform.m6 - fromWhat.Y))).Length();
+        }
     }
 
     public class SpriteObject : SceneObject
